@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float playerSpeed = 15f;
     [SerializeField] private float rotationSpeed = 3f;
+    [SerializeField] private Material colorMaterial;
     
     private float playerAxisY;
     private CharacterController ccPlayer;
@@ -26,6 +27,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip crossbowSound;
     
     public static bool arrowShooted = false;
+    [SerializeField] private GameObject shootPoint;
+    [SerializeField] private float rayDistance = 50f;
+
+    private bool canShootRaycast = true;
+    [SerializeField] private float cooldownTimeRaycast = 2f;
+    private float timePassedRaycast = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -95,6 +102,15 @@ public class PlayerController : MonoBehaviour
             SceneManager.LoadScene("SampleScene");
             Debug.Log("Ganaste!");
         }
+        if(canShootRaycast){
+            PlayerRaycastEmit();
+            }
+            else{
+                timePassedRaycast += Time.deltaTime;
+                if(timePassedRaycast > cooldownTimeRaycast){
+                    canShootRaycast = true;
+                }
+        }
     }
 
     private void MoveCC()
@@ -152,5 +168,16 @@ public class PlayerController : MonoBehaviour
     }
     private void ShowScore(){
         Debug.Log("Su puntuación es de: " + GameManager.gmInstance.score);
+    }
+
+    private void PlayerRaycastEmit(){
+        RaycastHit hit;
+        if(Physics.Raycast(shootPoint.transform.position, shootPoint.transform.TransformDirection(Vector3.forward), out hit, rayDistance)){
+            if(hit.transform.CompareTag("Enemy")){
+                canShootRaycast = false;
+                timePassedRaycast = 0f;
+                hit.transform.localScale /= 2;
+            }
+        }
     }
 }
