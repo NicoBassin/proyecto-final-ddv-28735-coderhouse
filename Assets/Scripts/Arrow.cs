@@ -15,7 +15,6 @@ public class Arrow : MonoBehaviour
     private GameObject enemy;
     private bool enemyImpaled = false;
     private bool canMove = true;
-    private bool firstEnemy = true;
     [SerializeField] private ArrowColor arrowName;
 
     // Start is called before the first frame update
@@ -46,11 +45,10 @@ public class Arrow : MonoBehaviour
     }
 
     private void OnTriggerExit(Collider other){
-        if(other.gameObject.CompareTag("Enemy") && firstEnemy)
+        if(other.gameObject.CompareTag("Enemy"))
         {
             enemyImpaled = true;
             enemy = other.gameObject;
-            firstEnemy = false;
         }
     }
 
@@ -60,11 +58,12 @@ public class Arrow : MonoBehaviour
         enemy.transform.Translate(Vector3.forward * arrowSpeed * Time.deltaTime);
     }
 
-    private void OnTriggerEnter(Collider other){
+    private void OnCollisionEnter(Collision other){
         if(other.gameObject.CompareTag("Wall")){
             enemyImpaled = false;
             canMove = false;
             Invoke("DestroyGameObjects", 5f);
+            GameManager.gmInstance.score++;
         }
     }
 

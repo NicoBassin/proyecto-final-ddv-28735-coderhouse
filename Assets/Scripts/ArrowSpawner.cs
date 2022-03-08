@@ -18,7 +18,7 @@ public class ArrowSpawner : MonoBehaviour
     void Update()
     {
         if(PlayerController.arrowShooted && !recentlyShooted){
-            Invoke("CreateArrow", 0.5f);
+            Invoke("CreateArrow", 0.8f);
             recentlyShooted = true;
         }
         if(!PlayerController.arrowShooted && recentlyShooted){
