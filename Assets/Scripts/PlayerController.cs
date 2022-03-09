@@ -49,6 +49,7 @@ public class PlayerController : MonoBehaviour
             playerSpeed /= 2;
             GameManager.gmInstance.damaged = false;
             GameManager.gmInstance.life--;
+            GameManager.gmInstance.score--;
         }
         if (GameManager.gmInstance.life == 0)
         {
@@ -163,6 +164,10 @@ public class PlayerController : MonoBehaviour
         }
         if(other.gameObject.CompareTag("PowerUp")){
             GameManager.gmInstance.score += 5;
+            Destroy(other.gameObject);
+        }
+        if(other.gameObject.CompareTag("Dart")){
+            GameManager.gmInstance.damaged = true;
             Destroy(other.gameObject);
         }
     }
