@@ -27,6 +27,6 @@ public class ArrowSpawner : MonoBehaviour
     }
 
     private void CreateArrow(){
-        Instantiate(arrowPrefab[Random.Range(0, 3)], transform.position, playerTransform.rotation);
+        Instantiate(arrowPrefab[Random.Range(0, arrowPrefab.Length)], transform.position, playerTransform.rotation);
     }
 }
