@@ -105,12 +105,12 @@ public class PlayerController : MonoBehaviour
         }
         if(canShootRaycast){
             PlayerRaycastEmit();
+        }
+        else{
+            timePassedRaycast += Time.deltaTime;
+            if(timePassedRaycast > cooldownTimeRaycast){
+                canShootRaycast = true;
             }
-            else{
-                timePassedRaycast += Time.deltaTime;
-                if(timePassedRaycast > cooldownTimeRaycast){
-                    canShootRaycast = true;
-                }
         }
     }
 
@@ -162,10 +162,10 @@ public class PlayerController : MonoBehaviour
         if(other.gameObject.CompareTag("Enemy")){
             GameManager.gmInstance.damaged = true;
         }
-        if(other.gameObject.CompareTag("PowerUp")){
+        /*if(other.gameObject.CompareTag("PowerUp")){
             GameManager.gmInstance.score += 5;
             Destroy(other.gameObject);
-        }
+        }*/
         if(other.gameObject.CompareTag("Dart")){
             GameManager.gmInstance.damaged = true;
             Destroy(other.gameObject);
@@ -178,10 +178,12 @@ public class PlayerController : MonoBehaviour
     private void PlayerRaycastEmit(){
         RaycastHit hit;
         if(Physics.Raycast(shootPoint.transform.position, shootPoint.transform.TransformDirection(Vector3.forward), out hit, rayDistance)){
-            if(hit.transform.CompareTag("Enemy")){
+            if(hit.transform.CompareTag("PowerUp")){
+                HUDManager.hudmInstance.NewObject(hit.transform.gameObject);
+                GameManager.gmInstance.score += 5;
                 canShootRaycast = false;
                 timePassedRaycast = 0f;
-                hit.transform.localScale /= 2;
+                Destroy(hit.transform.gameObject);
             }
         }
     }
