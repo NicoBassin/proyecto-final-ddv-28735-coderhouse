@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class HUDManager : MonoBehaviour
 {
     public enum ColorPowerUp {Blue, Green, Pink, Yellow};
     public static HUDManager hudmInstance;
     [SerializeField] GameObject[] panels;
     [SerializeField] Sprite[] imagesPrefabs;
+    [SerializeField] private GameObject panel;
     List<Image> images = new List<Image>();
     public int index = 0;
     public int color = 0; // Blue = 0, Green = 1, Pink = 2, Yellow = 3
@@ -63,5 +63,13 @@ public class HUDManager : MonoBehaviour
             index = 0;
             maxItems = true;
         }
+    }
+
+    public void ToggleStart(){
+        
+    }
+
+    public void ToggleExit(){
+
     }
 }

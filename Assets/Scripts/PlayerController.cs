@@ -53,7 +53,7 @@ public class PlayerController : MonoBehaviour
         }
         if (GameManager.gmInstance.life == 0)
         {
-            SceneManager.LoadScene("SampleScene");
+            SceneManager.LoadScene("Level1");
             GameManager.gmInstance.life = 5;
         }
 
@@ -100,7 +100,7 @@ public class PlayerController : MonoBehaviour
 
         if(GameObject.FindGameObjectsWithTag("PowerUp").Length == 0){
             GameManager.gmInstance.score+=50;
-            SceneManager.LoadScene("SampleScene");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             Debug.Log("Ganaste!");
         }
         if(canShootRaycast){
