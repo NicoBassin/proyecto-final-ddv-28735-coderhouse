@@ -103,7 +103,10 @@ public class PlayerController : MonoBehaviour
         if(GameObject.FindGameObjectsWithTag("PowerUp").Length == 0){
             GameManager.gmInstance.score+=50;
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            Debug.Log("Ganaste!");
+            Debug.Log("Siguiente nivel");
+        }
+        if(GameManager.gmInstance.score > 500){
+            Debug.Log("Llegaste a 500 puntos!");
         }
         if(canShootRaycast){
             PlayerRaycastEmit();
@@ -174,7 +177,7 @@ public class PlayerController : MonoBehaviour
         }
     }
     private void ShowScore(){
-        Debug.Log("Su puntuación es de: " + GameManager.gmInstance.score);
+        Debug.Log("Tienes " + GameManager.gmInstance.score + " puntos!");
     }
 
     private void PlayerRaycastEmit(){

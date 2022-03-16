@@ -50,6 +50,9 @@ public class HUDManager : MonoBehaviour
 
         if(!maxItems){
             InventoryManager.imInstance.AddToInventory(item, index);
+            if(index == 7){
+                panels[0].GetComponent<Image>().color = Color.red;
+            }
         }
         else{
             InventoryManager.imInstance.RemoveFromInventory(index);

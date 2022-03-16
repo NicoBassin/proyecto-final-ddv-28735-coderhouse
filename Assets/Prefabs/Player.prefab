@@ -267,7 +267,7 @@ MonoBehaviour:
   crossbowSound: {fileID: 8300000, guid: 4b3d2d15e0122db42a4b13566a73c0ba, type: 3}
   shootPoint: {fileID: 79431102464811491}
   rayDistance: 50
-  cooldownTimeRaycast: 2
+  cooldownTimeRaycast: 1
 --- !u!82 &79431102321843898
 AudioSource:
   m_ObjectHideFlags: 0
