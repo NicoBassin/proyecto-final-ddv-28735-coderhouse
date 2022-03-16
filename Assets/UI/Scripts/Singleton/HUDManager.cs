@@ -9,7 +9,7 @@ public class HUDManager : MonoBehaviour
     public static HUDManager hudmInstance;
     [SerializeField] GameObject[] panels;
     [SerializeField] Sprite[] imagesPrefabs;
-    [SerializeField] private GameObject panel;
+    [SerializeField] private Text lifeText;
     List<Image> images = new List<Image>();
     public int index = 0;
     public int color = 0; // Blue = 0, Green = 1, Pink = 2, Yellow = 3
@@ -54,22 +54,29 @@ public class HUDManager : MonoBehaviour
         else{
             InventoryManager.imInstance.RemoveFromInventory(index);
             InventoryManager.imInstance.AddToInventory(item, index);
+            if(panels[index].GetComponent<Image>().color == Color.red){
+                panels[index].GetComponent<Image>().color = Color.clear;
+            }
+            if(index < 7){
+                panels[index+1].GetComponent<Image>().color = Color.red;
+            }
+            else{
+                panels[0].GetComponent<Image>().color = Color.red;
+            }
         }
-
+        
         if(index < 7){
+            
             index++;
         }
         else{
             index = 0;
             maxItems = true;
         }
-    }
-
-    public void ToggleStart(){
         
     }
 
-    public void ToggleExit(){
-
+    public void LifeTextChange(int life){
+        lifeText.text = "Life: " + life;
     }
 }

@@ -50,11 +50,13 @@ public class PlayerController : MonoBehaviour
             GameManager.gmInstance.damaged = false;
             GameManager.gmInstance.life--;
             GameManager.gmInstance.score--;
+            HUDManager.hudmInstance.LifeTextChange(GameManager.gmInstance.life);
         }
         if (GameManager.gmInstance.life == 0)
         {
             SceneManager.LoadScene("Level1");
             GameManager.gmInstance.life = 5;
+            HUDManager.hudmInstance.LifeTextChange(GameManager.gmInstance.life);
         }
 
         if (Input.GetKey(KeyCode.W))

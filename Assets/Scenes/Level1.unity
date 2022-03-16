@@ -1422,10 +1422,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1198785754, guid: 1491e44213a3bf04fac30fb6ca38552f, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2159797621136781152, guid: 1491e44213a3bf04fac30fb6ca38552f, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1510,9 +1506,28 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2159797621136781153, guid: 1491e44213a3bf04fac30fb6ca38552f, type: 3}
+      propertyPath: lifeText
+      value: 
+      objectReference: {fileID: 2159797621296207597}
+    - target: {fileID: 2159797621136781153, guid: 1491e44213a3bf04fac30fb6ca38552f, type: 3}
+      propertyPath: maxItems
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2159797621136781156, guid: 1491e44213a3bf04fac30fb6ca38552f, type: 3}
       propertyPath: m_Name
       value: HUD
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1491e44213a3bf04fac30fb6ca38552f, type: 3}
+--- !u!114 &2159797621296207597 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1415959352, guid: 1491e44213a3bf04fac30fb6ca38552f, type: 3}
+  m_PrefabInstance: {fileID: 2159797621296207596}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
