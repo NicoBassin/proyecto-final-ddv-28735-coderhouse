@@ -6,17 +6,13 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float playerSpeed = 15f;
-    [SerializeField] private float rotationSpeed = 3f;
-    [SerializeField] private Material colorMaterial;
-    
+    [SerializeField] private PlayerData playerStats;
+    private float movementSpeed;
     private float playerAxisY;
     private CharacterController ccPlayer;
     private float gravity = -9.81f;
-    [SerializeField] float jumpHeight = 3f;
     private float jumpVelocity;
     private Vector3 speed;
-    [SerializeField] private float shootCooldownTime = 2f;
 
     private float timePassed = 0f;
     private bool canShoot = true;
@@ -34,9 +30,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float cooldownTimeRaycast = 2f;
     private float timePassedRaycast = 0f;
 
+    public event Action OnDeath;
+
+    void Awake(){
+        FindObjectOfType<PlayerController>().OnDeath += Die;
+        FindObjectOfType<GemsCounter>().OnPowerUpsCollected += NextLevel;
+        FindObjectOfType<GameManager>().OnDamage += Damage;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+        movementSpeed = playerStats.PlayerSpeed;
         audioPlayer = GetComponent<AudioSource>();
         ccPlayer = GetComponent<CharacterController>();
     }
@@ -44,21 +49,22 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.gmInstance.damaged)
-        {
-            playerSpeed /= 2;
-            GameManager.gmInstance.damaged = false;
-            GameManager.gmInstance.life--;
-            GameManager.gmInstance.score--;
-            HUDManager.hudmInstance.LifeTextChange(GameManager.gmInstance.life);
-        }
-        if (GameManager.gmInstance.life == 0)
-        {
-            SceneManager.LoadScene("Level1");
-            GameManager.gmInstance.life = 5;
-            HUDManager.hudmInstance.LifeTextChange(GameManager.gmInstance.life);
-        }
+        Walk();
+        Jump();
+        MoveCC();
+        Shoot();
+        Rotate();
+        ShowScore();
+        PlayerRaycastEmit();
 
+        if(GameManager.gmInstance.playerHP <= 0){
+            OnDeath?.Invoke();
+            Debug.Log("Evento OnDeath llamado por: PlayerController");
+        }
+    }
+
+    private void Walk()
+    {
         if (Input.GetKey(KeyCode.W))
         {
             MovePlayer(Vector3.forward);
@@ -80,43 +86,6 @@ public class PlayerController : MonoBehaviour
         {
             MovePlayer(Vector3.right);
         }
-
-        if (Input.GetKeyDown(KeyCode.Space) && ccPlayer.isGrounded)
-        {
-            Jump();
-        }
-
-        MoveCC();
-
-        if (!canShoot)
-        {
-            RestartCooldown();
-        }
-        if (Input.GetKeyDown(KeyCode.Mouse0) && canShoot)
-        {
-            Shoot();
-        }
-
-        Rotate();
-        ShowScore();
-
-        if(GameObject.FindGameObjectsWithTag("PowerUp").Length == 0){
-            GameManager.gmInstance.score+=50;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            Debug.Log("Siguiente nivel");
-        }
-        if(GameManager.gmInstance.score > 500){
-            Debug.Log("Llegaste a 500 puntos!");
-        }
-        if(canShootRaycast){
-            PlayerRaycastEmit();
-        }
-        else{
-            timePassedRaycast += Time.deltaTime;
-            if(timePassedRaycast > cooldownTimeRaycast){
-                canShootRaycast = true;
-            }
-        }
     }
 
     private void MoveCC()
@@ -126,70 +95,116 @@ public class PlayerController : MonoBehaviour
         ccPlayer.Move(Vector3.down * Time.deltaTime);
     }
 
+    private void Damage()
+    {
+        movementSpeed /= 2;
+        GameManager.gmInstance.playerHP--;
+        GameManager.gmInstance.playerScore--;
+        HUDManager.hudmInstance.LifeTextChange(GameManager.gmInstance.playerHP);
+    }
+
     private void MovePlayer(Vector3 direction){
-        ccPlayer.Move(playerSpeed * Time.deltaTime * transform.TransformDirection(direction));
+        ccPlayer.Move(movementSpeed * Time.deltaTime * transform.TransformDirection(direction));
     }
 
     private void Jump(){
-        ccPlayer.Move(jumpVelocity * Vector3.up);
-        speed.y = Mathf.Sqrt(-gravity * jumpHeight);
+        if (Input.GetKeyDown(KeyCode.Space) && ccPlayer.isGrounded)
+        {
+            ccPlayer.Move(jumpVelocity * Vector3.up);
+            speed.y = Mathf.Sqrt(-gravity * playerStats.JumpHeight);
+        }
     }
 
     private void Rotate(){
-        playerAxisY += Input.GetAxis("Mouse X") * rotationSpeed;
+        playerAxisY += Input.GetAxis("Mouse X") * playerStats.RotationSpeed;
         Quaternion angleX = Quaternion.Euler(0f, playerAxisY, 0f);
         transform.localRotation = angleX;
     }
 
-    private void RestartCooldown(){
-        if(timePassed >= shootCooldownTime){
-            canShoot = true;
-            crossbowAnimator.SetBool("isShooting", false);
-        }
-        else{
-            timePassed += Time.deltaTime;
-            if(arrowShooted){
-                arrowShooted = false;
+    private void Cooldown(){
+        if (!canShoot)
+        {
+            if(timePassed >= playerStats.ShootCooldownTime){
+                canShoot = true;
+                crossbowAnimator.SetBool("isShooting", false);
+            }
+            else{
+                timePassed += Time.deltaTime;
+                if(arrowShooted){
+                    arrowShooted = false;
+                }
             }
         }
     }
 
     private void Shoot()
     {
-        audioPlayer.PlayOneShot(crossbowSound, 0.75f);
-        crossbowAnimator.SetBool("isShooting", true);
-        timePassed = 0f;
-        canShoot = false;
-        arrowShooted = true;
+        Cooldown();
+        if (Input.GetKeyDown(KeyCode.Mouse0) && canShoot)
+        {
+            audioPlayer.PlayOneShot(crossbowSound, 0.75f);
+            crossbowAnimator.SetBool("isShooting", true);
+            timePassed = 0f;
+            canShoot = false;
+            arrowShooted = true;
+        }
     }
 
     private void OnTriggerEnter(Collider other) {
         if(other.gameObject.CompareTag("Enemy")){
-            GameManager.gmInstance.damaged = true;
+            GameManager.gmInstance.TakeDamage();
         }
-        /*if(other.gameObject.CompareTag("PowerUp")){
-            GameManager.gmInstance.score += 5;
-            Destroy(other.gameObject);
-        }*/
         if(other.gameObject.CompareTag("Dart")){
-            GameManager.gmInstance.damaged = true;
+            GameManager.gmInstance.TakeDamage();
             Destroy(other.gameObject);
         }
     }
     private void ShowScore(){
-        Debug.Log("Tienes " + GameManager.gmInstance.score + " puntos!");
+        Debug.Log("Tienes " + GameManager.gmInstance.playerScore + " puntos!");
+        if(GameManager.gmInstance.playerScore > 500){
+            Debug.Log("Llegaste a 500 puntos!");
+        }
     }
 
+    private void NextLevel()
+    {
+        Debug.Log("Evento OnGemsColledted recibido por: PlayerController.NextLevel()");
+        GameManager.gmInstance.playerScore += 50;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Debug.Log("Siguiente nivel");
+    }
     private void PlayerRaycastEmit(){
-        RaycastHit hit;
-        if(Physics.Raycast(shootPoint.transform.position, shootPoint.transform.TransformDirection(Vector3.forward), out hit, rayDistance)){
-            if(hit.transform.CompareTag("PowerUp")){
-                HUDManager.hudmInstance.NewObject(hit.transform.gameObject);
-                GameManager.gmInstance.score += 5;
-                canShootRaycast = false;
-                timePassedRaycast = 0f;
-                Destroy(hit.transform.gameObject);
+        if (canShootRaycast)
+        {
+            RaycastHit hit;
+            if(Physics.Raycast(shootPoint.transform.position, shootPoint.transform.TransformDirection(Vector3.forward), out hit, rayDistance)){
+                if(hit.transform.CompareTag("PowerUp")){
+                    HUDManager.hudmInstance.NewObject(hit.transform.gameObject);
+                    GameManager.gmInstance.playerScore += 5;
+                    canShootRaycast = false;
+                    timePassedRaycast = 0f;
+                    Destroy(hit.transform.gameObject);
+                }
             }
         }
+        else
+        {
+            timePassedRaycast += Time.deltaTime;
+            if (timePassedRaycast > cooldownTimeRaycast)
+            {
+                canShootRaycast = true;
+            }
+        }
+    }
+
+    private void Die()
+    {
+        Debug.Log("Evento OnDeath recibido por: PlayerController.Die()");
+        SceneManager.LoadScene("Level1");
+        Debug.Log("Moriste! D:");
+        movementSpeed = 5f;
+        GameManager.gmInstance.playerHP = 5;
+        GameManager.gmInstance.playerScore = 0;
+        HUDManager.hudmInstance.LifeTextChange(GameManager.gmInstance.playerHP);
     }
 }

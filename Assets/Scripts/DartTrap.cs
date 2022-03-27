@@ -10,6 +10,7 @@ public class DartTrap : MonoBehaviour
     private bool canShoot = true;
     [SerializeField] private float cooldownTime = 2f;
     private float timePassed = 0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,5 +47,10 @@ public class DartTrap : MonoBehaviour
             Vector3 puntoB = shootPoint.transform.TransformDirection(Vector3.forward) * rayDistance;
             Gizmos.DrawRay(shootPoint.transform.position, puntoB);
         }
+    }
+
+    public void TrapState(){
+        this.gameObject.SetActive(!this.gameObject.activeSelf);
+        Debug.Log("Evento OnButtonPush recibido por: DartTrap.TrapState()");
     }
 }

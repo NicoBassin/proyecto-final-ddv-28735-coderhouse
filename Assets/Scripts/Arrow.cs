@@ -63,7 +63,7 @@ public class Arrow : MonoBehaviour
             enemyImpaled = false;
             canMove = false;
             Invoke("DestroyGameObjects", 5f);
-            GameManager.gmInstance.score++;
+            GameManager.gmInstance.playerScore++;
         }
     }
 

@@ -2,40 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ZombieController : MonoBehaviour
+public class ZombieController : Enemy
 {
-    private GameObject player;
-    [SerializeField] private float speed = 5f;
-    [SerializeField] private float minDistance = 1f;
-    [SerializeField] private float rotationSpeed = 2f;
-
-    // Start is called before the first frame update
-    void Start()
+    protected override void Update()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        base.Update();
+        StayGrounded();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        ChasePlayer();
-        LookAtPlayerLerp();
-    }
-
-    
-    private void ChasePlayer()
-    {
-        float distance = (player.transform.position - transform.position).magnitude;
-
-        if(!(distance < minDistance))
-        {
-            transform.position = Vector3.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);
-        }
-    }
-
-    private void LookAtPlayerLerp()
+    protected override void LookAtPlayer()
     {
         Quaternion newRotation = Quaternion.LookRotation(player.transform.position - transform.position);
-        transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, rotationSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, enemyStats.RotationSpeed * Time.deltaTime);
+    }
+
+    private void StayGrounded(){
+        if(transform.position.y > 0){
+            transform.Translate(Vector3.down * enemyStats.Speed * Time.deltaTime);
+        }
     }
 }

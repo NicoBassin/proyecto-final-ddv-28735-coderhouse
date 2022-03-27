@@ -218,6 +218,7 @@ GameObject:
   - component: {fileID: 79431102321843896}
   - component: {fileID: 79431102321843899}
   - component: {fileID: 79431102321843898}
+  - component: {fileID: 3260880856771438387}
   - component: {fileID: 79431102321843783}
   m_Layer: 0
   m_Name: Player
@@ -256,11 +257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf629dd15cdbd97448c8048c59509d92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSpeed: 15
-  rotationSpeed: 3
-  colorMaterial: {fileID: 2100000, guid: 2a1123ca8eca0df489d6d27d3d9b8297, type: 2}
-  jumpHeight: 3
-  shootCooldownTime: 2
+  playerStats: {fileID: 11400000, guid: 3571f2f7e448ce245ae233f192c36445, type: 2}
   crossbowAnimator: {fileID: 5388541774565413925}
   playerAnimator: {fileID: 3280310998885923061}
   audioPlayer: {fileID: 79431102321843898}
@@ -364,6 +361,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &3260880856771438387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 79431102321843780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 644440f8481d1fc4d879123dca046a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!143 &79431102321843783
 CharacterController:
   m_ObjectHideFlags: 0
